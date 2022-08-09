@@ -432,7 +432,7 @@ type headerParser struct {
 	err    error
 }
 
-func (hp headerParser) parseAddress(s string) (ma *mail.Address) {
+func (hp *headerParser) parseAddress(s string) (ma *mail.Address) {
 	if hp.err != nil {
 		return nil
 	}
@@ -446,7 +446,7 @@ func (hp headerParser) parseAddress(s string) (ma *mail.Address) {
 	return nil
 }
 
-func (hp headerParser) parseAddressList(s string) (ma []*mail.Address) {
+func (hp *headerParser) parseAddressList(s string) (ma []*mail.Address) {
 	if hp.err != nil {
 		return
 	}
@@ -459,7 +459,7 @@ func (hp headerParser) parseAddressList(s string) (ma []*mail.Address) {
 	return
 }
 
-func (hp headerParser) parseTime(s string) (t time.Time) {
+func (hp *headerParser) parseTime(s string) (t time.Time) {
 	if hp.err != nil || s == "" {
 		return
 	}
@@ -481,7 +481,7 @@ func (hp headerParser) parseTime(s string) (t time.Time) {
 	return
 }
 
-func (hp headerParser) parseMessageId(s string) string {
+func (hp *headerParser) parseMessageId(s string) string {
 	if hp.err != nil {
 		return ""
 	}
@@ -489,7 +489,7 @@ func (hp headerParser) parseMessageId(s string) string {
 	return strings.Trim(s, "<> ")
 }
 
-func (hp headerParser) parseMessageIdList(s string) (result []string) {
+func (hp *headerParser) parseMessageIdList(s string) (result []string) {
 	if hp.err != nil {
 		return
 	}
