@@ -9,6 +9,7 @@ import (
 	"mime"
 	"mime/multipart"
 	"net/mail"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -377,7 +378,12 @@ func decodeEmbeddedFile(part *Part) (ef EmbeddedFile, err error) {
 
 	ef.CID = strings.Trim(cid, "<>")
 	ef.Data = decoded
-	ef.ContentType = part.Header.Get("Content-Type")
+	ef.ContentType = part.contentType
+
+	if name, ok := part.contentTypeParams["name"]; ok {
+		name = filepath.Base(name)
+		ef.Filename = decodeMimeSentence(name)
+	}
 
 	return
 }
@@ -400,7 +406,11 @@ func decodeAttachment(part *Part) (at Attachment, err error) {
 
 	at.Filename = filename
 	at.Data = decoded
-	at.ContentType = strings.Split(part.Header.Get("Content-Type"), ";")[0]
+
+	at.ContentType, _, err = mime.ParseMediaType(part.Header.Get("Content-Type"))
+	if err != nil {
+		return
+	}
 
 	return
 }
@@ -513,6 +523,7 @@ type Attachment struct {
 // EmbeddedFile with content id, content type and data (as a io.Reader)
 type EmbeddedFile struct {
 	CID         string
+	Filename    string
 	ContentType string
 	Data        io.Reader
 }
